@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load customtags %}
+
+{% block contenido %}
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/es_LA/sdk.js#xfbml=1&version=v2.10";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+<div class="col-md-8">
+	<div class="row box">
+		<div class="col-md-12">
+			<h4>Bienvenidos a la Fetoteca Virtual</h4>
+		</div>
+	</div>
+
+	<div class="row box">
+		<div class="col-md-12">
+			<div id="myCarousel" class="carousel slide" data-ride="carousel">
+				<!-- Indicators -->
+				<ol class="carousel-indicators">
+					{%for image in images %}
+					<li data-target="#myCarousel" data-slide-to="{{forloop.counter0}}"></li>
+					{%endfor%}
+				</ol>
+
+				<!-- Wrapper for slides -->
+				<div class="carousel-inner">
+					{%for image in images %}
+						{%if forloop.first %}
+						<div class="item active">
+						{%else%}
+						<div class="item">
+						{%endif%}
+						<img src="{% static image %}" alt="">
+						</div>
+					{%endfor%}
+					<!-- Left and right controls -->
+					<a class="left carousel-control" href="#myCarousel" data-slide="prev">
+						<span class="glyphicon glyphicon-chevron-left"></span>
+						<span class="sr-only">Anterior</span>
+					</a>
+					<a class="right carousel-control" href="#myCarousel" data-slide="next">
+						<span class="glyphicon glyphicon-chevron-right"></span>
+						<span class="sr-only">Siguiente</span>
+					</a>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="col-md-4">
+	<div class="row box" style="position:relative; overflow:hidden; ">
+		<div class="fb-page" data-href="https://www.facebook.com/uamhycsuaz/" data-tabs="timeline" data-small-header="true" data-adapt-container-width="true" data-hide-cover="false" data-show-facepile="true"><blockquote cite="https://www.facebook.com/uamhycsuaz/" class="fb-xfbml-parse-ignore"><a href="https://www.facebook.com/uamhycsuaz/">Medicina Humana UAZ</a></blockquote></div>
+	</div>
+</div>
+
+
+
+{% endblock %}

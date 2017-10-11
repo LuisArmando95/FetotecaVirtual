@@ -1,0 +1,39 @@
+<script src="https://cloud.tinymce.com/stable/tinymce.min.js"></script>
+<script>tinymce.init({ selector:'textarea' });</script>
+{% extends 'base.html' %}
+{% load testset %}
+
+{% load static %}
+
+{% block contenido %}
+
+<div class="contenedorEditar" id="contenedorEditar">
+	<form class="formEditar">
+		<h3>Nombre</h3>
+		<input type="text" name="" value="{{feto.nombre}}"> 
+		<h3>Descripción</h3>
+		<textarea class="editor">{{feto.descripcion}}</textarea>
+
+		<h3>Malformaciones</h3>
+			{% for malformacion in malformaciones.all %}
+				{% if malformacion.id in feto.malformaciones %}
+					<input id="m{{malformacion.id}}" type="checkbox" value="checked" name="">{{malformacion.nombre}}
+				{% else %}
+					<input id="m{{malformacion.id}}" type="checkbox" > {{malformacion.nombre}}<br>
+				{% endif %}
+		  	{% endfor %}
+		<h3>Semestres</h3>
+			{% for semestre in semestres.all %}
+				{% if semestre.id in feto.semestres %}
+					<input id="m{{semestre.id}}" type="checkbox" value="checked" name="">{{semestre.nombre}}
+				{% else %}
+					<input id="m{{semestre.id}}" type="checkbox" > {{semestre.nombre}}<br>
+				{% endif %}
+		  	{% endfor %}
+	</form>
+
+</div>
+
+
+
+{% endblock %}

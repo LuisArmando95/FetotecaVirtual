@@ -1,0 +1,235 @@
+{%extends 'base.html' %}
+{% load static %}
+{%block head%}
+	<link rel="stylesheet" href="{% static 'css/dropzone.css' %}">
+	<script src="https://cloud.tinymce.com/stable/tinymce.min.js"></script>
+	<script src="{% static 'js/dropzone.js' %}"></script>
+{%endblock%}
+{% block contenido %}
+<div class="col-md-12">
+	<div class="row box">
+		<div class="col-md-12">
+			<div class="form-group">
+				<label for="doc-title">Identificador del embrión:</label>
+				<input type="text" class="form-control" id="doc-title" value="{{feto.nombre}}">
+			</div>
+
+		</div>
+		<div class="col-md-8 col-sm-12">
+			<div class="form-group">
+				<label for="doc-content">Contenido:</label>
+				<textarea id='doc-content'>{{feto.contenido|safe}}</textarea>
+				<script type="text/javascript">
+					tinymce.init({ selector:'#doc-content', 
+						height: 500, 
+						theme: 'modern',
+						plugins: [
+							'advlist autolink lists link image charmap print preview hr anchor pagebreak',
+							'searchreplace wordcount visualblocks visualchars code fullscreen',
+							'insertdatetime media nonbreaking save table contextmenu directionality',
+							'emoticons template paste textcolor colorpicker textpattern imagetools codesample toc help'
+						],
+						toolbar1: 'undo redo | insert | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image',
+						toolbar2: 'print preview media | forecolor backcolor emoticons | codesample help',
+						image_advtab: true,
+						content_css: [
+							'//fonts.googleapis.com/css?family=Lato:300,300i,400,400i',
+							'//www.tinymce.com/css/codepen.min.css'
+						]
+					});
+				</script>
+			</div>
+		</div>
+
+		<div class="col-md-4 col-sm-12">
+			<div class="form-group">
+				<label>Malformaciones asociadas:</label>
+				<div class="pre-scrollable" id="doc-malformaciones">
+					{% for malformacion in malformaciones %}
+	                  <div class="checkbox">
+	                    <label>
+	                    {% if malformacion in feto.malformaciones.all %}
+	                        <input type="checkbox" name="listaMalformacion" id="malformacion{{malformacion.id}}" data-filter="{{malformacion.id}}" checked="checked"> 
+	                    {% else %}
+	                    	<input type="checkbox" name="listaMalformacion" id="malformacion{{malformacion.id}}" data-filter="{{malformacion.id}}" > 
+	                    {% endif %}
+	                    {{malformacion.nombre}}
+	                    </label>
+	                  </div>
+	                {% endfor %}
+				</div>
+				
+                <br/>
+                <label for="sel1">Periodo prenatal:</label>
+				<select class="form-control" name="doc-periodo" id="doc-periodo">
+					<option value="">Sin definir</option>
+					{%for periodo in periodos%}
+						{% if periodo == feto.periodo %}
+							<option id="periodo-{{periodo.id}}" value="{{periodo.id}}" selected="selected">{{periodo.nombre}}</option>
+						{% else %}
+							<option id="periodo-{{periodo.id}}" value="{{periodo.id}}">{{periodo.nombre}}</option>
+						{% endif %}
+						
+					{% endfor%}
+				</select>
+			</div>
+		</div>
+
+
+		<div class="col-md-12">
+			<h4>Imágenes: </h4>
+			<div>
+			{%for image in feto.imagenes.all %}
+				<div class="col-md-4">
+					<div class="thumbnail">
+					  <a href="{% static image.url %}">
+					    <img src="{% static image.url %}" style="width:100%">
+					  </a>
+					</div>
+				</div>
+			{%endfor%}
+			</div>
+		</div>
+		
+		<div class="col-md-12">
+			<div class="form-group">
+				<label for="doc-images">Actualizar Imágenes(Al agregar nuevas imágenes, estas sustituirán a las anteriores): </label>
+				<div id="image-uploader" class="dropzone dz-clickable">
+					<div class="dz-message">Arrastra aquí las imágenes (o click)</div>
+				</div>
+
+				
+
+			</div>
+		</div>
+		<div class="col-md-12">
+			<div id="save-alert" class="alert" style="display:none;">
+				<a id="save-alert-close" href="#" class="close" aria-label="close">&times;</a>
+				<span></span>
+			</div>
+		</div>
+		<div class="col-md-12">
+			<div class="divider"></div>
+			<a type="button" class="btn btn-primary pull-right" href="javascript:history.back(-1);" title="Ir la página anterior">Cancelar</a>
+			 <button id="save-button" data-fetoid='{{feto.id}}' data-href="{%url 'embriologia:guardar'%}" type="button" class="btn btn-primary pull-right"><i class="fa fa-floppy-o" aria-hidden="true"></i> Guardar</button>
+		</div>
+
+		<script type="text/javascript">
+			var csrf = "{{csrf_token}}";
+			var upload_url = "{%url 'embriologia:upload' %}";
+			var images = {};
+			$('#save-alert-close').click(function(){
+				$('#save-alert').hide('medium');
+			});
+
+
+			$('#save-button').click(function(){
+				var url = $(this).data('href');
+				save_doc(url);
+				
+			});
+
+			var imageUploader = new Dropzone("#image-uploader", {
+				url: upload_url,
+				method: 'post',
+				headers: {'X-CSRFToken': csrf},
+				addRemoveLinks: true
+			});
+
+			imageUploader.on('removedfile', function(file){
+				delete images[file.name];
+			});
+
+			imageUploader.on('success', function(file, response){
+				console.log('adding: ' + response.result);
+				if (response.status == "ok"){
+					images[file.name] = response.result[0];
+				}
+
+			});
+			
+			imageUploader.on('error', function(file, message, request){
+				console.log('onError');
+			});
+
+
+			// AJAX for posting
+			function save_doc(url) {
+			    console.log("create post is working!") // sanity check
+			    var id = $("#save-button").data('fetoid');
+			    var doc = {};
+
+			    doc.content = tinymce.get('doc-content').getContent();
+			    doc.title = $('#doc-title').val();
+			    doc.malformations = $('input[name=listaMalformacion]:checked').map(function (){
+				 	return ($(this).attr('data-filter'));
+				}).get();
+
+			   	doc.images = [];
+			    for (var key in images){
+			    	if (images.hasOwnProperty(key)){
+			    		doc.images.push(images[key]);
+			    	}
+			    }
+
+				doc.period = $('#doc-periodo').val();
+				if (id != ''){
+			    	doc.id = id;	
+			    }
+				if (doc.title == ''){
+					$('#save-alert span').text("Debes ingresar un titulo al documento.");
+					$('#save-alert').prop('class', 'alert alert-danger').hide().show('medium');
+					return;
+				}
+				
+				if (doc.content == ''){
+					$('#save-alert span').text("Debes ingresar el cuerpo del documento.");
+					$('#save-alert').prop('class', 'alert alert-danger').hide().show('medium');
+					return;
+				}
+				if (doc.malformations == ''){
+					$('#save-alert span').text("Debes seleccionar al menos una malformación.");
+					$('#save-alert').prop('class', 'alert alert-danger').hide().show('medium');
+					return;
+				}
+				if (doc.period == ''){
+					$('#save-alert span').text("Debes seleccionar un periodo prenatal.");
+					$('#save-alert').prop('class', 'alert alert-danger').hide().show('medium');
+					return;
+				}
+
+				$(this).prop('disabled', true);
+				console.log(JSON.stringify(doc));
+				$.ajax({
+					type:"POST",
+					url: url,
+					dataType:'json',
+					data: JSON.stringify(doc),
+					headers:{'X-CSRFToken': csrf}
+				}).done(function(result){
+					if (result.status == 'ok'){
+						$('#save-alert span').text(result.description);
+						$('#save-alert').prop('class', 'alert alert-success').hide().show('medium');
+						$('#save-button').data('fetoid', result.id);
+						redireccionar();
+						alert("¡Registro guardado con exito!");
+					}
+				}).fail(function(xhr, status, error){
+					$('#save-alert span').text("Ocurrio un error en la solicitud: " + error);
+					$('#save-alert').prop('class', 'alert alert-danger').hide().show('medium');
+				}).always(function(){
+					$('#save-button').prop('disabled', false);
+				})
+			    
+			};
+			var pagina="/embriologia/lista/"
+			function redireccionar() {
+				location.href=pagina
+			} 
+			setTimeout ("redireccionar()", 20000000);
+		</script>
+
+	</div>
+	
+</div>
+{% endblock %}

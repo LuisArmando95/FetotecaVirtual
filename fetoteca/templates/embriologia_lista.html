@@ -1,0 +1,221 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load customtags %}
+
+{% block contenido %}
+  <!-- Filtros !-->
+  <div class="col-md-3">
+      <!-- Periodos prenatales -->
+      <div class="panel panel-default sidebar-menu">
+          <div class="panel-heading">
+              <h3 class="panel-title">Desarrollo prenatal</h3>
+          </div>
+
+          <div class="panel-body">
+              <ul class="nav nav-pills nav-stacked category-menu">
+                {% for periodo in periodos %}
+                  {% if periodoSeleccionado == periodo.id %}
+                      <li class="active">
+                  {% else %}
+                      <li>                            
+                  {% endif %}
+                  <a href="{% url 'embriologia:lista' periodo.id 1 pageSize %}"> {{periodo.nombre}}<span class="badge pull-right"></span></a>
+                  </li>
+                {% endfor %}
+                {% if periodoSeleccionado == 0 %}
+                  <li class="active">
+                {% else %}
+                  <li>
+                {% endif %}
+                <a href="{%url 'embriologia:lista' 0 1 pageSize %}"> Todos</a> </li>
+              </ul>
+          </div>
+      </div>
+
+      <!-- Lista de Malformaciones -->
+      <div class="panel panel-default sidebar-menu">
+
+          <div class="panel-heading">
+            <h3 class="panel-title">Filtrar por Malformaciones</h3>
+          </div>
+
+          <div class="panel-body">
+
+            <form action="{% url 'embriologia:lista' periodoSeleccionado 1 pageSize %}" method="POST" id="filterForm">
+              {% csrf_token %}
+              <input type="hidden" name="filter" id="filter" />
+              <div class="form-group">
+                {% for malformacion in malformaciones %}
+                  <div class="checkbox">
+                    <label>
+                        {% if malformacion.id|stringformat:"i" in malformacionesSeleccionadas %}
+                        <input type="checkbox" name="listaMalformacion" checked="checked" id="malformacion{{malformacion.id}}" data-filter="{{malformacion.id}}">
+                        {% else %}
+                        <input type="checkbox" name="listaMalformacion" id="malformacion{{malformacion.id}}" data-filter="{{malformacion.id}}"> 
+                        {% endif %}
+                        {{malformacion.nombre}}
+                        
+                    </label>
+                  </div>
+                {% endfor %}
+              </div>
+
+
+              <label><input type="checkbox" id="checkTodos" />Marcar/Desmarcar Todos</label>
+              <button class="btn btn-default btn-sm btn-primary"><i class="fa fa-pencil"></i> Aplicar</button> 
+              
+
+            </form>
+
+
+              <script type="text/javascript">
+                  $(document).ready(function(){
+                      $("#filterForm").submit(function(event){
+                          var filters = $('input[name=listaMalformacion]:checked').map(function (){
+                              return ($(this).attr('data-filter'));
+                          }).get();
+
+                          $("#filter").val(filters.join("_") );
+                          //$.redirect($(this).attr('action'), {'materialFilter': materialFilter.join(" ")});
+                      });
+                      $("#clearFilter").click(function(event){
+                          $('input[name=listaMalformacion]').each(function(index){
+                              $(this).attr('checked',false);
+                          });
+                          event.preventDefault();
+                      });
+                  });
+                  $('document').ready(function(){
+                    $("#checkTodos").change(function () {
+                      $("input:checkbox").prop('checked', $(this).prop("checked"));
+                       });
+                    });
+              </script>
+          </div>
+
+      </div>   
+  </div>
+
+  <div class="col-md-9">
+    <!--Segmentacion y ordenamiento-->
+    <div class="box info-bar">
+      <div class="row">
+          <div class="col-sm-12 col-md-4 items-showing">
+              Mostrando <strong>{{fetos.paginator.count}}</strong> registros
+          </div>
+
+          <div class="col-sm-12 col-md-8  items-number-sort">
+            <div class="row">
+                <form class="form-inline">
+                    <div class="col-md-12">
+                        <div class="items-number">
+                          <strong>Ver</strong>
+                          <a href="{%url 'embriologia:lista' periodoSeleccionado 1 6%}" class="btn btn-default btn-sm {{pageSize|iif:'6:btn-primary'}}">6</a>
+                          <a href="{%url 'embriologia:lista' periodoSeleccionado 1 12%}" class="btn btn-default btn-sm {{pageSize|iif:'12:btn-primary'}}">12</a> 
+                          <a href="{%url 'embriologia:lista' periodoSeleccionado 1 0%}" class="btn btn-default btn-sm {{pageSize|iif:'0:btn-primary'}}">Todos</a>
+                        </div>
+                    </div>
+                    
+                </form>
+            </div>
+          </div>
+      </div>
+    </div>
+
+    <!--Lista de embriones-->
+    <div class="row">
+      {% for feto in fetos %}
+      <div class="col-md-6 "><div class="box">
+        
+        <div class="media-left">
+        {% for image in feto.imagenes.all|slice:"1" %}
+           <img src="{%static image.url %}" class="media-object" style="height:90px; width:110px;">
+        {% empty %}
+          <img src="{%static 'images/default_embrion.jpg' %}" class="media-object" style="height:90px; width:110px;">
+        {% endfor %}
+        </div>
+
+        <div class="media-body">
+          {%if request.user.is_superuser or request.user == feto.creator %}
+          <div class="btn-group btn-group-xs pull-right" role="group" aria-label="">
+            <a class="btn btn-primary" href="{%url 'embriologia:modificar' feto.id 0 %}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></a>
+            <a class="btn btn-danger delete-button" data-href="{%url 'embriologia:eliminar' feto.id %}" data-toggle="modal" data-target="#confirmDialog">
+              <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+            </a>
+          </div>
+          {%endif%}
+          <h4 class="media-heading"><a href="{%url 'embriologia:ver' feto.id%}"> {{feto.nombre}}  </a></h4>
+
+          <p>{{feto.malformaciones.all | join:" | "}}</p>
+          <span class="pull-right" > <a class="btn btn-primary seemore" href="{%url 'embriologia:ver' feto.id%}">Ver más</a></span>
+        </div>
+      </div>
+    </div>
+    {% empty %}
+      <h1 style="text-align:center; margin:50px"> Lo sentimos, aun no hay registros del filtro seleccionado.</h1>
+    {% endfor %}
+    
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="confirmDialog" role="dialog">
+      <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal">&times;</button>
+            <h4 class="modal-title"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i> ¡Peligro!</h4>
+          </div>
+          <div class="modal-body">
+            <p><strong>¿Estás seguro de eliminar el registro?.</strong> Esta acción no se podrá deshacer.</p>
+          </div>
+          <div class="modal-footer">
+            <a type="button" class="btn btn-primary" data-dismiss="modal">Cancelar</a>
+            <a id="delete-button" type="button" class="btn btn-danger">Eliminar</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript">
+      $('.delete-button').click(function(){
+        var url = $(this).data('href');
+        $('#delete-button').attr('href', url);
+      });
+    </script>
+    <!-- End Modal -->
+
+    <!--Paginacion-->
+    <div class="pages">
+
+      <p class="horizontal-div">
+      </p>
+
+      <ul class="pagination">
+        <li>
+        {%if fetos.number == 1%}
+          <a href="#">«</a>
+        {%else%}
+          <a href="{%url 'embriologia:lista' periodoSeleccionado fetos.number|add:'-1' pageSize%}">«</a>
+        {%endif%}
+        </li>
+
+        {% for page in fetos.paginator.page_range %}
+          {%if page == fetos.number%}
+            <li class="active">
+          {%else%}
+            <li>
+          {%endif%}
+          <a href="{%url 'embriologia:lista' periodoSeleccionado page pageSize%}">{{page}}</a></li>
+        {% endfor %}
+         
+         <li>
+        {%if fetos.number == fetos.paginator.num_pages %}
+          <a href="#">»</a>
+        {%else%}
+          <a href="{%url 'embriologia:lista' periodoSeleccionado fetos.number|add:'1' pageSize%}">»</a>
+        {%endif%}
+        </li>
+
+      </ul>
+  </div>
+  </div>  
+{% endblock %}

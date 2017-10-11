@@ -1,0 +1,136 @@
+{% load static %}
+{% load customtags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>{%block titulo%}Fetoteca Virtual::UAZ{%endblock%}</title>
+
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" href="/static/img/favicon.png">
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="{% static 'css/font-awesome.css' %}">
+	<link rel="stylesheet" href="{% static 'css/styles.css'%}">
+	{%block head %} {%endblock%}
+</head>
+<body>
+<!--TOP -->
+<div id="top">
+	<div class="container">
+		<div class="col-sm-8">
+			<a href="http://www.uaz.edu.mx">
+				Universidad Autónoma de Zacatecas
+			</a>
+		</div>
+		<div class="col-sm-4">
+			<ul class="menu">
+				
+					
+					<script type="text/javascript">
+						$(document).ready(function(){
+							$('#user-popover').popover({ 
+								html : true,
+								placement:'bottom',
+								title:'Opciones',
+								trigger: 'focus',
+								container: "body",
+								content: function() {
+									return $('#user-options').html();
+								}
+							});
+						});
+					</script>
+		
+			</ul>
+
+		</div>
+		<div class="modal fade" id="loginDialog" tabindex="-1" role="dialog" aria-labelledby="Login" aria-hidden="true" style="">
+            <div class="modal-dialog modal-sm">
+
+            </div>
+        </div>
+        <script type="text/javascript">
+        </script>
+	</div>
+</div>
+<!-- NAVIGATION BAR -->
+<nav id="navbar" class="navbar navbar-default" rol="navigation" data-spy="affix" data-offset-top="35">	
+	<div class="container">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-menu">
+				<span class="glyphicon glyphicon-menu-hamburger"></span>
+			</button>
+			<a class="navbar-brand" href="#"><img src="{%static 'images/logo.png'%}" alt="Fetoteca Virtual"/></a>
+		</div>
+		<div class="collapse navbar-collapse" id="main-menu">
+			<ul class="nav navbar-nav">
+				<li><a href="{%url 'embriologia:index' %}"><span class="glyphicon glyphicon-home"></span> Inicio</a></li>
+				<li><a href="{%url 'embriologia:lista' %}">Embriología</a></li>
+				<li><a href="{%url 'embriologia:listaSem' 1000 0 12%}">Trabajos Científicos</a></li>
+			</ul>
+		</div>
+	</div>
+	
+</nav>
+
+
+
+
+<div id="main-content" class="container">
+	{% if request.session.message %}
+		<div class="col-md-12">
+			<div class="alert fade in alert-{{request.session.message.type}}">
+				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+				{{request.session.message.description}}
+			</div>
+		</div>
+	{%endif%}
+	
+	{% if breadcrumb %}
+	<div class="col-md-12">
+		<ul class="breadcrumb">	
+			{% for nombre,link in breadcrumb  %}
+				{% if forloop.last %}
+					<li>{{nombre}}</li>	
+				{% else %}
+					<li><a href="{{link}}">{{nombre}}</a></li>
+				{% endif %}
+			{% endfor %}
+		
+		</ul>
+	</div>
+	{% endif %}
+	
+	{% block contenido %}
+		Hello World!
+	{% endblock %}
+</div>
+
+
+
+<div id="footer" data-animate="fadeInUp"  class="animated fadeInUp">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <h4>Redes Sociales</h4>
+                <p class="social">
+                    <a href="https://www.facebook.com/uamhycsuaz/" class="facebook external" data-animate-hover="shake"><i class="fa fa-facebook"></i></a>
+                    <a href="#" class="twitter external" data-animate-hover="shake"><i class="fa fa-twitter"></i></a>
+                    <a href="#" class="instagram external" data-animate-hover="shake"><i class="fa fa-instagram"></i></a>
+                    <a href="#" class="gplus external" data-animate-hover="shake"><i class="fa fa-google-plus"></i></a>
+                    <a href="#" class="email external" data-animate-hover="shake"><i class="fa fa-envelope"></i></a>
+                </p>
+             </div>
+        </div>
+
+
+		<div class="pull-right">
+			<a href="#top" class="scrollup"><i class="fa fa-angle-up fa-3x"></i></a>
+		</div>
+    </div>
+</div>
+</body>
+</html>

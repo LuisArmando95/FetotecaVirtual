@@ -1,0 +1,210 @@
+{% load static %}
+{% load customtags %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>{%block titulo%}Fetoteca Virtual::UAZ{%endblock%}</title>
+
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="shortcut icon" href="/static/img/favicon.png">
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.0/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<link rel="stylesheet" href="{% static 'css/font-awesome.css' %}">
+	<link rel="stylesheet" href="{% static 'css/styles.css'%}">
+	{%block head %} {%endblock%}
+</head>
+<body>
+<!--TOP -->
+<div id="top">
+	<div class="container">
+		<div class="col-sm-8">
+			<a href="http://www.uaz.edu.mx">
+				Universidad Autónoma de Zacatecas
+			</a>
+		</div>
+		<div class="col-sm-4">
+			<ul class="menu">
+				{% if request.user.is_authenticated %}
+					<li>
+						<a id="user-popover" href="#" data-href="{%url 'usuarios:logout' %}">
+							<span class="glyphicon glyphicon-user"></span> {{request.user.username}}
+						</a>
+						<div id="user-options" class="col-md-4" style="display:none;">
+							<ul>
+								<li>
+									<span> Embriología </span>
+									<div class="btn-group" style="float:right;">
+									  <a href="{%url 'embriologia:guardar' %}" type="button" class="btn btn-primary"><i class="fa fa-plus-circle" aria-hidden="true"></i> Crear</a>
+									  <a href="{%url 'embriologia:lista' %}" type="button" class="btn btn-primary"><i class="fa fa-list" aria-hidden="true"></i> Ver lista</a>
+									</div>
+								</li>
+								<li>
+									<span> Trabajos Científicos </span>
+									<div class="btn-group" style="float:right;">
+									  <a href="{%url 'embriologia:guardar' 0 1000%}" type="button" class="btn btn-primary"><i class="fa fa-plus-circle" aria-hidden="true"></i> Crear</a>
+									  <a href="{%url 'embriologia:listaSem' 1000 0 12 %}" type="button" class="btn btn-primary"><i class="fa fa-list" aria-hidden="true"></i> Ver lista</a>
+									</div>
+								</li>
+								<li>
+									<span> Actualizar Perfil </span>
+									<div class="btn-group" style="float:right;">
+									  <a href="{%url 'usuarios:cambioContra'%}" type="button" class="btn btn-primary"><i class="fa fa-plus-circle" aria-hidden="true"></i> Cambiar Contraseña</a>
+									  <a href="{%url 'usuarios:cambioCorreo'%}" type="button" class="btn btn-primary"> <i class="fa fa-plus-circle" aria-hidden="true"></i> Cambiar Correo</a>
+									</div>
+								</li>
+								<li role="separator" class="divider"></li>
+								<li>
+									<div class="btn-group" style="float:right;">
+									  <a href="{%url 'usuarios:logout' %}"type="button" class="btn btn-danger"><i class="fa fa-sign-out" aria-hidden="true"></i></i> Cerrar sesión</a>
+									</div>
+								</li>
+							</ul>
+			
+					</li>
+					<script type="text/javascript">
+						$(document).ready(function(){
+							$('#user-popover').popover({ 
+								html : true,
+								placement:'bottom',
+								title:'Opciones',
+								trigger: 'focus',
+								container: "body",
+								content: function() {
+									return $('#user-options').html();
+								}
+							});
+						});
+					</script>
+				{% else %}
+					<li><a href="#" data-toggle="modal" data-target="#loginDialog"><span class="glyphicon glyphicon-user"></span> Iniciar Sesión</a></li>
+					<li><a href="{% url 'usuarios:registro' %}" ><span class="glyphicon glyphicon-log-in"></span> Registrarse</a></li>
+				{% endif %}
+			</ul>
+
+		</div>
+		<div class="modal fade" id="loginDialog" tabindex="-1" role="dialog" aria-labelledby="Login" aria-hidden="true" style="">
+            <div class="modal-dialog modal-sm">
+
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                        <h4 class="modal-title" id="Login">Iniciar Sesión</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form action="{%url 'usuarios:login'%}" method="post">
+                        	{% csrf_token %}
+                        	<input type="hidden" name="source" value="{{source}}">
+                            <div class="form-group">
+                                <input type="text" class="form-control" id="username-modal" name="username" placeholder="Nombre de usuario">
+                            </div>
+                            <div class="form-group">
+                                <input type="password" class="form-control" id="password-modal" name="password" placeholder="Contraseña">
+                            </div>
+
+                            <p class="text-center">
+                                <button class="btn btn-primary" id="loginButton"><i class="fa fa-sign-in"></i> Entrar</button>
+                            </p>
+
+                        </form>
+                        <p class="text-center text-muted"><a href="{% url 'usuarios:registro' %}"><strong>¿Aún no estás registrado?</strong></a> !Es fácil hacerlo y tendrás características adicionales!</p>
+                        <p class="text-center text-muted"><a href="{% url 'password_reset' %}"><strong>¿Olvidaste tu contraseña?</strong></a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/javascript">
+        </script>
+	</div>
+</div>
+<!-- NAVIGATION BAR -->
+<nav id="navbar" class="navbar navbar-default" rol="navigation" data-spy="affix" data-offset-top="35">	
+	<div class="container">
+		<div class="navbar-header">
+			<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-menu">
+				<span class="glyphicon glyphicon-menu-hamburger"></span>
+			</button>
+			<a class="navbar-brand" href="#"><img src="{%static 'images/logo.png'%}" alt="Fetoteca Virtual"/></a>
+		</div>
+		<div class="collapse navbar-collapse" id="main-menu">
+			<ul class="nav navbar-nav">
+				<li><a href="{%url 'embriologia:index' %}"><span class="glyphicon glyphicon-home"></span> Inicio</a></li>
+				<li><a href="{%url 'embriologia:lista' %}">Embriología</a></li>
+				<li><a href="{%url 'embriologia:listaSem' 1000 0 12%}">Trabajos Científicos</a></li>
+			</ul>
+		</div>
+	</div>
+	
+</nav>
+
+
+
+
+<div id="main-content" class="container">
+	{% if request.session.message %}
+		<div class="col-md-12">
+			<div class="alert fade in alert-{{request.session.message.type}}">
+				<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+				{{request.session.message.description}}
+			</div>
+		</div>
+	{%endif%}
+	<!-- Imprime el mensaje del cambio de contraseña -->
+	{% include 'messages.html' %}
+        {% block content %}
+    {% endblock %}
+	
+	{% if breadcrumb %}
+	<div class="col-md-12">
+		<ul class="breadcrumb">	
+			{% for nombre,link in breadcrumb  %}
+				{% if forloop.last %}
+					<li>{{nombre}}</li>	
+				{% else %}
+					<li><a href="{{link}}">{{nombre}}</a></li>
+				{% endif %}
+			{% endfor %}
+		
+		</ul>
+	</div>
+	{% endif %}
+	
+	{% block contenido %}
+	{% if messages %}
+  <ul class="messages">
+    {% for message in messages %}
+      <li class="{{ message.tags }}">{{ message }}</li>
+    {% endfor %}
+  </ul>
+{% endif %}
+		Hello World!
+	{% endblock %}
+</div>
+
+
+
+<div id="footer" data-animate="fadeInUp"  class="animated fadeInUp">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <h4>Redes Sociales</h4>
+                <p class="social">
+                    <a href="https://www.facebook.com/uamhycsuaz/" class="facebook external" data-animate-hover="shake"><i class="fa fa-facebook"></i></a>
+                    <a href="#" class="twitter external" data-animate-hover="shake"><i class="fa fa-twitter"></i></a>
+                    <a href="#" class="instagram external" data-animate-hover="shake"><i class="fa fa-instagram"></i></a>
+                    <a href="#" class="gplus external" data-animate-hover="shake"><i class="fa fa-google-plus"></i></a>
+                    <a href="#" class="email external" data-animate-hover="shake"><i class="fa fa-envelope"></i></a>
+                </p>
+             </div>
+        </div>
+
+
+		<div class="pull-right">
+			<a href="#top" class="scrollup"><i class="fa fa-angle-up fa-3x"></i></a>
+		</div>
+    </div>
+</div>
+</body>
+</html>
