@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*
+# -*- encoding: utf-8 -*-
 from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.urls import reverse 
@@ -92,8 +93,9 @@ def cambioContra(request):
 
 			traerusuario= User.objects.get(username= request.user.get_username())
 			username= traerusuario.get_username()
-			
-			traerusuario.email_user("Cambio de Contrasena", "Se ha cambiado la contrasena del usuario: "+ username)
+			subject="Cambio de Contraseña"
+			message= u"Se ha cambiado la contraseña del usuario: "
+			traerusuario.email_user(subject, message + username)
 
 			messages.success(request, '¡Tu contraseña ha sido actualizada exitosamente!')
 			return redirect(reverse('embriologia:index'))

@@ -83,6 +83,7 @@ DATABASES = {
         'PASSWORD': 'ingsoftware2017', 
         'HOST': '192.168.33.1', 
         'PORT': '',
+        
     
     }
 }
