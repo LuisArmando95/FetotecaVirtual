@@ -19,102 +19,105 @@
 	</div>
 
 	<div class="row box">
-	<h4>Imágenes</h4>
-	<div>
-	{%for image in feto.imagenes.all %}
-		<div class="col-md-4">
-			<div class="thumbnail">
-			  <a href="{% static image.url %}">
-			    <img src="{% static image.url %}" style="width:100%">
-			  </a>
-			</div>
+		<h4>Imágenes</h4>
+		<div>
+			{%for image in feto.imagenes.all %}
+				<div class="col-md-4">
+					<div class="thumbnail">
+				  		<a href="{% static image.url %}">
+				    		<img src="{% static image.url %}" style="width:100%">
+				  		</a>
+					</div>
+				</div>
+			{%endfor%}
 		</div>
-	{%endfor%}
 	</div>
-	</div>
-
 
 	<div class="row box">
-	<h4>Comentarios</h4>
-	{% if request.user.is_authenticated %}
-  		<div class="media">
-		    <div class="media-left">
-		      <img src="https://www.atomix.com.au/media/2015/06/atomix_user31.png" class="media-object" style="width:60px">
-		    </div>
-		    <div class="media-body">
-		      <h6 class="media-heading">{{request.user.username}}</h6>
-		      <input id="comment" type="text" placeholder="Inserta un comentario...">
-		      <p>{{comment.texto}}</p>
-		    </div>
-		    <div id="comment_loading" class="loading_box">
-		    	<img src="{% static 'images/loading.gif' %}">
-		    </div>
-  		</div>
-  	{% endif %}
+		<h4>Comentarios</h4>
+		{% if request.user.is_authenticated %}
+  			<div class="media">
+		    	<div class="media-left">
+		      		<img src="https://www.atomix.com.au/media/2015/06/atomix_user31.png" class="media-object" style="width:60px">
+		    	</div>
+		    	
+		    	<div class="media-body">
+		      		<h6 class="media-heading">{{request.user.username}}</h6>
+		      		<input id="comment" type="text" placeholder="Inserta un comentario...">
+		      		<p>{{comment.texto}}</p>
+		    	</div>
+		    	
+		    	<div id="comment_loading" class="loading_box">
+		    		<img src="{% static 'images/loading.gif' %}">
+		    	</div>
+  			</div>
+  		{% endif %}
 
-	<div id="comments-container">
-	<div class="media comment" style="display:none;">
-	    <div class="media-left">
-	      <img src="https://www.atomix.com.au/media/2015/06/atomix_user31.png" class="media-object" style="width:60px">
-	    </div>
-	    <div class="media-body">
-	      <h6 class="media-heading">{{request.user.username}}</h6>
-	      <p>{{comment.texto}}</p>
-	    </div>
-	</div>
-	{% for comment in comentarios %}
-		<div class="media comment">
-		    <div class="media-left">
-		      <img src="https://www.atomix.com.au/media/2015/06/atomix_user31.png" class="media-object" style="width:60px">
-		    </div>
-		    <div class="media-body">
-		      <h6 class="media-heading">{{comment.user.username}}</h6>
-		      <p>{{comment.texto}}</p>
-		    </div>
-  		</div>
-	{% endfor %}
-	</div>
+		<div id="comments-container">
+			<div class="media comment" style="display:none;">
+	    		<div class="media-left">
+	      			<img src="https://www.atomix.com.au/media/2015/06/atomix_user31.png" class="media-object" style="width:60px">
+	    		</div>
+	    
+	    		<div class="media-body">
+	      			<h6 class="media-heading">{{request.user.username}}</h6>
+	      			<p>{{comment.texto}}</p>
+	    		</div>
+			</div>
+			{% for comment in comentarios %}
+				<div class="media comment">
+		    		<div class="media-left">
+		      			<img src="https://www.atomix.com.au/media/2015/06/atomix_user31.png" class="media-object" style="width:60px">
+		    		</div>
+		    
+		    		<div class="media-body">
+		      			<h6 class="media-heading">{{comment.user.username}}</h6>
+		      			<p>{{comment.texto}}</p>
+		    		</div>
+  				</div>
+			{% endfor %}
+		</div>
 	
-  	<script type="text/javascript">
-  		var csrf = "{{csrf_token}}";
-  		var url_comment = "{% url 'embriologia:comentar' %}";
-  		var feto_id = "{{feto.id}}";
-  		var user_name = "{{request.user.username}}";
+	  	<script type="text/javascript">
+	  		var csrf = "{{csrf_token}}";
+	  		var url_comment = "{% url 'embriologia:comentar' %}";
+	  		var feto_id = "{{feto.id}}";
+	  		var user_name = "{{request.user.username}}";
 
-  		$("#comment").on('keypress', function(e){
-  			if (e.which === 13){
+	  		$("#comment").on('keypress', function(e){
+	  			if (e.which === 13){
 
-	            $("#comment_loading").css('visibility', 'visible');
+		            $("#comment_loading").css('visibility', 'visible');
 
-	            var data = {};
-	            data.feto = feto_id;
-	            data.texto = $(this).val();
-	            $.ajax({
-					type:"POST",
-					url: url_comment,
-					dataType:'json',
-					data: JSON.stringify(data),
-					headers:{'X-CSRFToken': csrf}
-				}).done(function(result){
-					if (result.status == 'ok'){
-						$(this).val("");
-						var comment = $(".comment").first().clone();
-						$("#comments-container").prepend(comment);
-						comment.css('display','block');
-						comment.find("h6:first").text(user_name);
-						comment.find("p:first").text(data.texto);
-					}
-					console.log(JSON.stringify(result));
-				}).fail(function(xhr, status, error){
-					console.log(JSON.stringify(error));
-				}).always(function(){
-					$("#comment_loading").css("visibility", 'hidden');
-				});
+		            var data = {};
+		            data.feto = feto_id;
+		            data.texto = $(this).val();
+		            $.ajax({
+						type:"POST",
+						url: url_comment,
+						dataType:'json',
+						data: JSON.stringify(data),
+						headers:{'X-CSRFToken': csrf}
+					}).done(function(result){
+						if (result.status == 'ok'){
+							$(this).val("");
+							var comment = $(".comment").first().clone();
+							$("#comments-container").prepend(comment);
+							comment.css('display','block');
+							comment.find("h6:first").text(user_name);
+							comment.find("p:first").text(data.texto);
+						}
+						console.log(JSON.stringify(result));
+					}).fail(function(xhr, status, error){
+						console.log(JSON.stringify(error));
+					}).always(function(){
+						$("#comment_loading").css("visibility", 'hidden');
+					});
 
-	            
-	         }
-  		});
-  	</script>
+		            
+		         }
+	  		});
+	  	</script>
 	</div>
 	<a type="button" class="btn btn-primary pull-right" href="javascript:history.back(-1);" title="Ir la página anterior">Regresar</a>
 </div>

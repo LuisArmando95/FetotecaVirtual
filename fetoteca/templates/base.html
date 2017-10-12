@@ -35,33 +35,36 @@
 						<div id="user-options" class="col-md-4" style="display:none;">
 							<ul>
 								<li>
-									<span> Embriología </span>
+									<span> Embriología: </span>
 									<div class="btn-group" style="float:right;">
-									  <a href="{%url 'embriologia:guardar' %}" type="button" class="btn btn-primary"><i class="fa fa-plus-circle" aria-hidden="true"></i> Crear</a>
-									  <a href="{%url 'embriologia:lista' %}" type="button" class="btn btn-primary"><i class="fa fa-list" aria-hidden="true"></i> Ver lista</a>
+										<a href="{%url 'embriologia:guardar' %}" type="button" class="btn btn-primary"><i class="fa fa-plus-circle" aria-hidden="true"></i> Crear</a>
+										<a href="{%url 'embriologia:lista' %}" type="button" class="btn btn-primary"><i class="fa fa-list" aria-hidden="true"></i> Ver lista</a>
 									</div>
 								</li>
+								
 								<li>
-									<span> Trabajos Científicos </span>
+									<span> Trabajos Científicos: </span>
 									<div class="btn-group" style="float:right;">
-									  <a href="{%url 'embriologia:guardar' 0 1000%}" type="button" class="btn btn-primary"><i class="fa fa-plus-circle" aria-hidden="true"></i> Crear</a>
-									  <a href="{%url 'embriologia:listaSem' 1000 0 12 %}" type="button" class="btn btn-primary"><i class="fa fa-list" aria-hidden="true"></i> Ver lista</a>
+										<a href="{%url 'embriologia:guardar' 0 1000%}" type="button" class="btn btn-primary"><i class="fa fa-plus-circle" aria-hidden="true"></i> Crear</a>
+										<a href="{%url 'embriologia:listaSem' 1000 0 12 %}" type="button" class="btn btn-primary"><i class="fa fa-list" aria-hidden="true"></i> Ver lista</a>
 									</div>
 								</li>
+								
 								<li>
-									<span> Actualizar Perfil </span>
+									<span> Actualizar Perfil: </span>
 									<div class="btn-group" style="float:right;">
-									  <a href="{%url 'usuarios:cambioContra'%}" type="button" class="btn btn-primary"><i class="fa fa-plus-circle" aria-hidden="true"></i> Cambiar Contraseña</a>
-									  <a href="{%url 'usuarios:cambioCorreo'%}" type="button" class="btn btn-primary"> <i class="fa fa-plus-circle" aria-hidden="true"></i> Cambiar Correo</a>
+										<a href="{%url 'usuarios:cambioContra'%}" type="button" class="btn btn-primary"><i class="fa fa-plus-circle" aria-hidden="true"></i> Cambiar Contraseña</a>
+										<a href="{%url 'usuarios:cambioCorreo'%}" type="button" class="btn btn-primary"> <i class="fa fa-plus-circle" aria-hidden="true"></i> Cambiar Correo</a>
 									</div>
 								</li>
 								<li role="separator" class="divider"></li>
 								<li>
 									<div class="btn-group" style="float:right;">
-									  <a href="{%url 'usuarios:logout' %}"type="button" class="btn btn-danger"><i class="fa fa-sign-out" aria-hidden="true"></i></i> Cerrar sesión</a>
+										<a href="{%url 'usuarios:logout' %}"type="button" class="btn btn-danger"><i class="fa fa-sign-out" aria-hidden="true"></i></i> Cerrar sesión</a>
 									</div>
 								</li>
 							</ul>
+						</div>
 			
 					</li>
 					<script type="text/javascript">
@@ -83,12 +86,10 @@
 					<li><a href="{% url 'usuarios:registro' %}" ><span class="glyphicon glyphicon-log-in"></span> Registrarse</a></li>
 				{% endif %}
 			</ul>
-
 		</div>
 		<div class="modal fade" id="loginDialog" tabindex="-1" role="dialog" aria-labelledby="Login" aria-hidden="true" style="">
             <div class="modal-dialog modal-sm">
-
-                <div class="modal-content">
+				<div class="modal-content">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                         <h4 class="modal-title" id="Login">Iniciar Sesión</h4>
@@ -115,8 +116,7 @@
                 </div>
             </div>
         </div>
-        <script type="text/javascript">
-        </script>
+        
 	</div>
 </div>
 <!-- NAVIGATION BAR -->
@@ -172,14 +172,14 @@
 	{% endif %}
 	
 	{% block contenido %}
-	{% if messages %}
-  <ul class="messages">
-    {% for message in messages %}
-      <li class="{{ message.tags }}">{{ message }}</li>
-    {% endfor %}
-  </ul>
-{% endif %}
-		Hello World!
+		{% if messages %}
+	  		<ul class="messages">
+		    	{% for message in messages %}
+		      		<li class="{{ message.tags }}">{{ message }}</li>
+		    	{% endfor %}
+	  		</ul>
+		{% endif %}
+			Hello World!
 	{% endblock %}
 </div>
 

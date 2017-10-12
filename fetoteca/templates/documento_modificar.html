@@ -23,27 +23,8 @@
 			</div>
 
 		</div>
-		<div class="col-md-4 col-sm-12">
-			<div class="form-group">
-				<label>Semestre elaborado:</label>
-				<div class="pre-scrollable" id="doc-semestres">
-					{% for semestre in semestres %}
-	                  <div class="checkbox">
-	                    <label>
-	                    {% if semestre in feto.semestres.all %}
-	                        <input type="radio" name="listaSemestre" id="semestre{{semestre.id}}" data-filter="{{semestre.id}}" checked="checked"> 
-	                    {% else %}
-	                    	<input type="radio" name="listaSemestre" id="semestre{{semestre.id}}" data-filter="{{semestre.id}}" > 
-	                    {% endif %}
-	                    {{semestre.nombre}}
-	                    </label>
-	                  </div>
-	                {% endfor %}
-				</div>
-			</div>
-		</div>
 
-		<div class="col-md-12">
+		<div class="col-md-8 col-sm-12">
 			<div class="form-group">
 				<label for="doc-content">Contenido:</label>
 				<textarea id='doc-content'>{{feto.contenido|safe}}</textarea>
@@ -69,6 +50,26 @@
 			</div>
 		</div>
 
+		<div class="col-md-4 col-sm-12">
+			<div class="form-group">
+				<label>Semestre elaborado:</label>
+				<div class="pre-scrollable" id="doc-semestres">
+					{% for semestre in semestres %}
+	                  <div class="checkbox">
+	                    <label>
+	                    {% if semestre in feto.semestres.all %}
+	                        <input type="radio" name="listaSemestre" id="semestre{{semestre.id}}" data-filter="{{semestre.id}}" checked="checked"> 
+	                    {% else %}
+	                    	<input type="radio" name="listaSemestre" id="semestre{{semestre.id}}" data-filter="{{semestre.id}}" > 
+	                    {% endif %}
+	                    {{semestre.nombre}}
+	                    </label>
+	                  </div>
+	                {% endfor %}
+				</div>
+			</div>
+		</div>
+
 		<div class="col-md-12">
 			<h4>Imágenes: </h4>
 			<div>
@@ -83,6 +84,7 @@
 			{%endfor%}
 			</div>
 		</div>
+
 		<div class="col-md-12">
 			<div class="form-group">
 				<label for="doc-images">Actualizar Imágenes(Al agregar nuevas imágenes, estas sustituirán a las anteriores): </label>
@@ -91,12 +93,14 @@
 				</div>
 			</div>
 		</div>
+
 		<div class="col-md-12">
 			<div id="save-alert" class="alert" style="display:none;">
 				<a id="save-alert-close" href="#" class="close" aria-label="close">&times;</a>
 				<span></span>
 			</div>
 		</div>
+
 		<div class="col-md-12">
 			<div class="divider"></div>
 			<a type="button" class="btn btn-primary pull-right" href="javascript:history.back(-1);" title="Ir la página anterior">Cancelar</a>
@@ -214,8 +218,6 @@
 			} 
 			setTimeout ("redireccionar()", 20000000);
 		</script>
-
 	</div>
-	
 </div>
 {% endblock %}

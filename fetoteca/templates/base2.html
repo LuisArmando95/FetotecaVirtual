@@ -25,35 +25,31 @@
 				Universidad Autónoma de Zacatecas
 			</a>
 		</div>
+
 		<div class="col-sm-4">
 			<ul class="menu">
-				
-					
-					<script type="text/javascript">
-						$(document).ready(function(){
-							$('#user-popover').popover({ 
-								html : true,
-								placement:'bottom',
-								title:'Opciones',
-								trigger: 'focus',
-								container: "body",
-								content: function() {
-									return $('#user-options').html();
-								}
-							});
+				<script type="text/javascript">
+					$(document).ready(function(){
+						$('#user-popover').popover({ 
+							html : true,
+							placement:'bottom',
+							title:'Opciones',
+							trigger: 'focus',
+							container: "body",
+							content: function() {
+								return $('#user-options').html();
+							}
 						});
-					</script>
-		
+					});
+				</script>
 			</ul>
-
 		</div>
+		
 		<div class="modal fade" id="loginDialog" tabindex="-1" role="dialog" aria-labelledby="Login" aria-hidden="true" style="">
             <div class="modal-dialog modal-sm">
-
-            </div>
+			</div>
         </div>
-        <script type="text/javascript">
-        </script>
+        
 	</div>
 </div>
 <!-- NAVIGATION BAR -->
@@ -75,9 +71,6 @@
 	</div>
 	
 </nav>
-
-
-
 
 <div id="main-content" class="container">
 	{% if request.session.message %}
@@ -109,8 +102,6 @@
 	{% endblock %}
 </div>
 
-
-
 <div id="footer" data-animate="fadeInUp"  class="animated fadeInUp">
     <div class="container">
         <div class="row">
@@ -125,7 +116,6 @@
                 </p>
              </div>
         </div>
-
 
 		<div class="pull-right">
 			<a href="#top" class="scrollup"><i class="fa fa-angle-up fa-3x"></i></a>
