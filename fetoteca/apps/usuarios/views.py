@@ -102,7 +102,7 @@ def cambioContra(request):
 	else:
 		form = PasswordChangeForm(request.user)
 		
-	return render(request, 'cambiar_contraseña.html', {
+	return render(request, 'cambiar_contrasena.html', {
 		'form': form
 	})
 	
