@@ -17,6 +17,7 @@ from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from os import listdir
 from os.path import isfile, join
 from django.conf import settings
+from django.views.defaults import page_not_found
 
 from django.contrib.staticfiles.templatetags.staticfiles import static
 
@@ -491,3 +492,7 @@ def handle_upload(file):
 			dest.write(chunk)
 	
 	return image
+
+def mi_error_404(request):
+    nombre_template = '404.html'
+    return page_not_found(request, template_name=nombre_template)
