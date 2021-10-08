@@ -18,10 +18,6 @@ from django.contrib import admin
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth.views import password_reset, password_reset_done, password_reset_confirm, password_reset_complete 
-from django.conf.urls import handler404
-from apps.embriologia.views import mi_error_404
- 
-handler404 = mi_error_404
 
 
 urlpatterns = [
